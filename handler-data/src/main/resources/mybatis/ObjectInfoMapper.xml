@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cnbdty.device.dao.ObjectInfoMapper">
+	<resultMap id="BaseResultMap" type="com.cnbdty.device.model.ObjectInfo">
+		<id column="obj_id" jdbcType="BIGINT" property="objId" />
+		<result column="holder_id" jdbcType="BIGINT" property="holderId" />
+		<result column="terminal_id" jdbcType="VARCHAR" property="terminalId" />
+		<result column="is_online" jdbcType="INTEGER" property="isOnline" />
+		<result column="expired_date" jdbcType="TIMESTAMP" property="expiredDate" />
+		<result column="name" jdbcType="VARCHAR" property="name" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		obj_id, holder_id, terminal_id, is_online, expired_date, name, update_time, create_time
+	</sql>
+	<select id="selectByTerminalId" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from object_info
+		where terminal_id = #{terminalId,jdbcType=VARCHAR}
+	</select>
+
+	<update id="updateByPrimaryKeySelective" parameterType="com.cnbdty.device.model.ObjectInfo">
+		update object_info
+		<set>
+			<if test="holderId != null">
+				holder_id = #{holderId,jdbcType=BIGINT},
+			</if>
+			<if test="terminalId != null">
+				terminal_id = #{terminalId,jdbcType=VARCHAR},
+			</if>
+			<if test="isOnline != null">
+				is_online = #{isOnline,jdbcType=INTEGER},
+			</if>
+			<if test="expiredDate != null">
+				expired_date = #{expiredDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="name != null">
+				name = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		where obj_id = #{objId,jdbcType=BIGINT}
+	</update>
+
+</mapper>

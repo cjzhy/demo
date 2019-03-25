@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cnbdty.device.dao.ObjectPositionMapper">
+	<resultMap id="BaseResultMap" type="com.cnbdty.device.model.ObjectPosition">
+		<id column="id" jdbcType="BIGINT" property="id" />
+		<result column="obj_id" jdbcType="BIGINT" property="objId" />
+		<result column="gps_time" jdbcType="TIMESTAMP" property="gpsTime" />
+		<result column="gps_type" jdbcType="INTEGER" property="gpsType" />
+		<result column="longitude" jdbcType="DECIMAL" property="longitude" />
+		<result column="latitude" jdbcType="DECIMAL" property="latitude" />
+		<result column="baidu_lg" jdbcType="DECIMAL" property="baiduLg" />
+		<result column="baidu_lt" jdbcType="DECIMAL" property="baiduLt" />
+		<result column="address" jdbcType="VARCHAR" property="address" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, obj_id, gps_time, gps_type, longitude, latitude, baidu_lg, baidu_lt, address
+	</sql>
+	<select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from object_position
+		where id = #{id,jdbcType=BIGINT}
+	</select>
+	
+	<insert id="insertSelective" parameterType="com.cnbdty.device.model.ObjectPosition">
+		insert into object_position
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="objId != null">
+				obj_id,
+			</if>
+			<if test="gpsTime != null">
+				gps_time,
+			</if>
+			<if test="gpsType != null">
+				gps_type,
+			</if>
+			<if test="longitude != null">
+				longitude,
+			</if>
+			<if test="latitude != null">
+				latitude,
+			</if>
+			<if test="baiduLg != null">
+				baidu_lg,
+			</if>
+			<if test="baiduLt != null">
+				baidu_lt,
+			</if>
+			<if test="address != null">
+				address,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=BIGINT},
+			</if>
+			<if test="objId != null">
+				#{objId,jdbcType=BIGINT},
+			</if>
+			<if test="gpsTime != null">
+				#{gpsTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="gpsType != null">
+				#{gpsType,jdbcType=INTEGER},
+			</if>
+			<if test="longitude != null">
+				#{longitude,jdbcType=DECIMAL},
+			</if>
+			<if test="latitude != null">
+				#{latitude,jdbcType=DECIMAL},
+			</if>
+			<if test="baiduLg != null">
+				#{baiduLg,jdbcType=DECIMAL},
+			</if>
+			<if test="baiduLt != null">
+				#{baiduLt,jdbcType=DECIMAL},
+			</if>
+			<if test="address != null">
+				#{address,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.cnbdty.device.model.ObjectPosition">
+		update object_position
+		<set>
+			<if test="objId != null">
+				obj_id = #{objId,jdbcType=BIGINT},
+			</if>
+			<if test="gpsTime != null">
+				gps_time = #{gpsTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="gpsType != null">
+				gps_type = #{gpsType,jdbcType=INTEGER},
+			</if>
+			<if test="longitude != null">
+				longitude = #{longitude,jdbcType=DECIMAL},
+			</if>
+			<if test="latitude != null">
+				latitude = #{latitude,jdbcType=DECIMAL},
+			</if>
+			<if test="baiduLg != null">
+				baidu_lg = #{baiduLg,jdbcType=DECIMAL},
+			</if>
+			<if test="baiduLt != null">
+				baidu_lt = #{baiduLt,jdbcType=DECIMAL},
+			</if>
+			<if test="address != null">
+				address = #{address,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where id = #{id,jdbcType=BIGINT}
+	</update>
+	
+</mapper>

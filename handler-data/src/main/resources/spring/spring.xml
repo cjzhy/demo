@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:jms="http://www.springframework.org/schema/jms"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:lang="http://www.springframework.org/schema/lang"
+	xsi:schemaLocation="
+			http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+			http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+			http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+			http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.0.xsd
+			http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms-3.0.xsd
+			http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+			http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
+			http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang-3.0.xsd">
+	<!-- 加载属性文件 -->
+	
+	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations">
+            <list>
+                <value>jdbc.properties</value>
+                <value>producer.properties</value>
+            </list>
+        </property>
+        <property name="fileEncoding" value="utf-8"/>
+    </bean>
+    
+	<!-- SSL所需要密钥等配置信息 <bean class="cn.knet.zdnscloud.a.producer.entity.SSLKeyStorePreparer"> 
+		<property name="keyStore" value="${keyStore}" /> <property name="keyStorePassword" 
+		value="knet.cn" /> <property name="trustStore" value="${trustStore}" /> </bean> -->
+
+	<!-- IOC 扫描服务组件 -->
+	<context:component-scan base-package="com.cnbdty.device" />
+
+	<bean id="targetConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+		<!-- ActiveMQ默认服务端口为61616 -->
+		<property name="brokerURL" value="tcp://120.25.220.58:61616" />
+		<!-- 连接用户的用户名和密码 -->
+		<property name="userName" value="admin" />
+		<property name="password" value="admin" />
+	</bean>
+
+	<!-- 配置JMS连接工长 -->
+	<bean id="connectionFactory"
+		class="org.springframework.jms.connection.CachingConnectionFactory">
+		<constructor-arg ref="targetConnectionFactory" />
+		<property name="sessionCacheSize" value="30" />
+	</bean>
+	
+	<!-- jmsTemplate，用于向任意地址发送消息 -->
+	<bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+		<property name="connectionFactory" ref="connectionFactory" />
+	</bean>
+
+	<!-- 定义消息队列（Queue） -->
+	<bean id="demoQueueDestination" class="org.apache.activemq.command.ActiveMQQueue">
+		<!-- 设置消息队列的名字 -->
+		<constructor-arg>
+			<value>MyQueue</value>
+		</constructor-arg>
+	</bean>
+	
+	  <!-- 配置消息队列监听者（Queue） -->
+    <bean id="queueMessageListener" class="com.cnbdty.device.queue.listener.QueueMessageListener" />
+
+	  
+    <bean id="queueListenerContainer"
+        class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+        <property name="connectionFactory" ref="connectionFactory" />
+        <property name="destination" ref="demoQueueDestination" />
+        <property name="messageListener" ref="queueMessageListener" />
+         <!-- 设置固定的线程数 -->  
+	    <property name="concurrentConsumers" value="6"></property>  
+	    <!-- 设置动态的线程数 -->  
+	    <property name="concurrency" value="4-8"></property>  
+	    <!-- 设置最大的线程数 -->  
+	    <property name="maxConcurrentConsumers" value="32"></property>  
+    </bean>
+    
+    <bean id="springContextUtil" class="com.cnbdty.device.util.SpringContextUtil"></bean>  
+    
+	
+	<bean id="propertiesReader" class="com.cnbdty.device.model.PropertiesReader">
+	    <property name="threadNum" value="${server.threadnum}"/>
+		<property name="port" value="${server.port}"/>
+		<property name="timeout" value="${server.timeout}"/>
+	</bean>  
+
+    <import resource="spring-database.xml"/>
+
+
+
+</beans>
